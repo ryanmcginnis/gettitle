@@ -1,0 +1,80 @@
+# gettitle.sh
+# Grab webpage title and append to a file (OS X, Safari only)
+
+# In 10.8 and later, you MUST allow Terminal control in 
+# System Preferences > Privacy > Accessibility
+
+me=`whoami`
+cd /Users/$me/Desktop/
+timestamp="$(date +%m-%d-%y) $(date +%H.%M.%S)"
+echo $timestamp
+
+# Check if s Safari is open, and if not, quit
+
+osascript <<'END'
+tell application "Safari"
+if (count windows) is 0
+display dialog "Safari window wasn't open. Try again."
+try
+do shell script "killall Terminal"
+end try
+end if
+end tell
+END
+
+osascript <<'END'
+tell application "System Events"
+if not (exists window 1 of process "Safari") then
+display dialog "Safari window wasn't open. Try again."
+try
+do shell script "killall Terminal"
+end try
+end if
+end tell
+END
+
+while :;
+do
+	osascript <<'END'
+	tell application "Safari"
+	set myString to name of document 1
+	end tell
+	set newFile to POSIX file "temp.txt"
+	open for access newFile with write permission
+	write myString to newFile
+	close access newFile
+	tell application "Safari"
+	close tab 1 of window 1
+	end tell
+END
+	
+	cat temp.txt >> /Users/$me/Desktop/titles\ "$timestamp".txt
+	echo "" >> /Users/$me/Desktop/titles\ "$timestamp".txt
+	
+	rm -R temp.txt
+
+	# Check if a Safari window is still open, and if not, quit
+
+	osascript <<'END'
+	tell application "Safari"
+	if (count windows) is 0
+	display notification "Done!" with title "gettitle.sh"
+	try
+	do shell script "killall Terminal"
+	end try
+	end if
+	end tell
+END
+
+	osascript <<'END'
+	tell application "System Events"
+	if not (exists window 1 of process "Safari") then
+	display notification "Done!" with title "gettitle.sh"
+	try
+	do shell script "killall Terminal"
+	end try
+	end if
+	end tell
+END
+
+done
