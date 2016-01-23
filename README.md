@@ -1,4 +1,4 @@
-### gettitle
+# gettitle
 
 Grab webpage title and append to a file (OS X, Safari only)
 
