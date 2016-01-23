@@ -2,7 +2,7 @@
 
 Grab webpage title and append to a file (OS X, Safari only)
 
-# Known Bugs
+### Known Bugs
 
 The script will continue until all tabs are closed, which may be undesirable.
 
